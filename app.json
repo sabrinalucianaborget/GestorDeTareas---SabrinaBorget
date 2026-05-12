@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Gestor de Tareas",
+    "slug": "gestor-de-tareas",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gestordetareas.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f0f4ff"
+      },
+      "package": "com.gestordetareas.app"
+    }
+  }
+}
