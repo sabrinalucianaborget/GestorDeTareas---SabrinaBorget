@@ -130,6 +130,13 @@ Para esta segunda entrega se usó Claude (Anthropic) como asistente de IA
 para generar el código de las nuevas funcionalidades sobre la base ya
 entregada en el Parcial 1.
 
+Se usó como guía de contexto el código de HomeScreen.js, AddTaskScreen.js y TaskItem.js existentes, para que el estilo visual y la estructura de las pantallas nuevas (y las modificadas) fueran consistentes con las originales.
+Se verificaron en el entorno real las versiones exactas de los paquetes de Expo compatibles con el SDK del proyecto (expo-image-picker, expo-location, expo-contacts, expo-calendar) y se corrió la suite de tests para confirmar que los 3 tests mínimos pedidos pasan correctamente.
+
+Comparación código generado vs. código final integrado:
+
+El código generado por la IA se integró prácticamente sin cambios manuales, ya que se pidió explícitamente que respetara el estilo (StyleSheet, nombres de variables, estructura de carpetas) de las pantallas originales. La principal revisión manual fue ajustar la generación de id de las tareas en el store (de Date.now().toString() a Date.now()-random) para evitar colisiones cuando se crean varias tareas en un lapso muy corto, detectado al correr los tests automatizados.
+
 # |LINK VIDEO DEMO EN YOUTUBE|
 
 > 🎥 Demo: [https://youtube.com/shorts/HEymiFuUSpM?si=SEYYvl0eUW7jAxaS]
