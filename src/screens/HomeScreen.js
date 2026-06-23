@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,55 +9,61 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { getTasks, saveTasks } from '../utils/storage';
+import { useTaskStore } from '../store/taskStore';
+import { countPendingTasks } from '../utils/taskHelpers';
 import TaskItem from '../components/TaskItem';
 
 export default function HomeScreen({ navigation, route }) {
   const { username } = route.params;
-  const [tasks, setTasks] = useState([]);
+
+  // Estado global (Zustand): la lista de tareas ya no vive en un useState
+  // local, sino en el store compartido entre HomeScreen, AddTaskScreen y
+  // TaskDetailScreen.
+  const tasks = useTaskStore((state) => state.tasks);
+  const loadTasks = useTaskStore((state) => state.loadTasks);
+  const deleteTask = useTaskStore((state) => state.deleteTask);
+  const toggleTask = useTaskStore((state) => state.toggleTask);
+  const reset = useTaskStore((state) => state.reset);
 
   useFocusEffect(
     useCallback(() => {
-      loadTasks();
-    }, [])
+      loadTasks(username);
+    }, [username])
   );
 
-  async function loadTasks() {
-    const data = await getTasks(username);
-    setTasks(data);
-  }
-
-  async function handleDelete(id) {
+  function handleDelete(id) {
     Alert.alert('Eliminar tarea', '¿Estás seguro de que querés eliminar esta tarea?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Eliminar',
         style: 'destructive',
-        onPress: async () => {
-          const updated = tasks.filter((t) => t.id !== id);
-          setTasks(updated);
-          await saveTasks(username, updated);
-        },
+        onPress: () => deleteTask(id),
       },
     ]);
   }
 
-  async function handleToggle(id) {
-    const updated = tasks.map((t) =>
-      t.id === id ? { ...t, completed: !t.completed } : t
-    );
-    setTasks(updated);
-    await saveTasks(username, updated);
+  function handleToggle(id) {
+    toggleTask(id);
   }
 
   function handleLogout() {
     Alert.alert('Cerrar sesión', '¿Querés salir?', [
       { text: 'Cancelar', style: 'cancel' },
-      { text: 'Salir', onPress: () => navigation.replace('Login') },
+      {
+        text: 'Salir',
+        onPress: () => {
+          reset();
+          navigation.replace('Login');
+        },
+      },
     ]);
   }
 
-  const pending = tasks.filter((t) => !t.completed).length;
+  function handleDetail(task) {
+    navigation.navigate('TaskDetail', { taskId: task.id, username });
+  }
+
+  const pending = countPendingTasks(tasks);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,7 +92,12 @@ export default function HomeScreen({ navigation, route }) {
           data={tasks}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TaskItem task={item} onDelete={handleDelete} onToggle={handleToggle} />
+            <TaskItem
+              task={item}
+              onDelete={handleDelete}
+              onToggle={handleToggle}
+              onPressDetail={handleDetail}
+            />
           )}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}

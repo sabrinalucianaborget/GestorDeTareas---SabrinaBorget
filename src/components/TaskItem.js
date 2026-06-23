@@ -1,10 +1,25 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { formatLocationLabel } from '../utils/taskHelpers';
 
-export default function TaskItem({ task, onDelete, onToggle }) {
+export default function TaskItem({ task, onDelete, onToggle, onPressDetail }) {
+  const locationLabel = formatLocationLabel(task.location);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.info} onPress={() => onToggle(task.id)}>
+      {task.imageUri ? (
+        <Image source={{ uri: task.imageUri }} style={styles.thumbnail} />
+      ) : (
+        <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
+          <Text style={styles.thumbnailPlaceholderText}>📋</Text>
+        </View>
+      )}
+
+      <TouchableOpacity
+        style={styles.info}
+        onPress={() => onToggle(task.id)}
+        testID={`task-toggle-${task.id}`}
+      >
         <Text style={[styles.title, task.completed && styles.completedText]}>
           {task.completed ? '✓ ' : '○ '}
           {task.title}
@@ -12,8 +27,35 @@ export default function TaskItem({ task, onDelete, onToggle }) {
         {task.description ? (
           <Text style={styles.description}>{task.description}</Text>
         ) : null}
+
+        <View style={styles.badgesRow}>
+          {locationLabel ? (
+            <Text style={styles.badge}>📍 {locationLabel}</Text>
+          ) : null}
+          {task.contact ? (
+            <Text style={styles.badge}>👤 {task.contact.name}</Text>
+          ) : null}
+          {task.calendarEventId ? (
+            <Text style={styles.badge}>📅 En calendario</Text>
+          ) : null}
+        </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => onDelete(task.id)} style={styles.deleteBtn}>
+
+      {onPressDetail ? (
+        <TouchableOpacity
+          onPress={() => onPressDetail(task)}
+          style={styles.detailBtn}
+          testID={`task-detail-${task.id}`}
+        >
+          <Text style={styles.detailText}>ℹ️</Text>
+        </TouchableOpacity>
+      ) : null}
+
+      <TouchableOpacity
+        onPress={() => onDelete(task.id)}
+        style={styles.deleteBtn}
+        testID={`task-delete-${task.id}`}
+      >
         <Text style={styles.deleteText}>✕</Text>
       </TouchableOpacity>
     </View>
@@ -34,6 +76,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
+  thumbnail: {
+    width: 46,
+    height: 46,
+    borderRadius: 10,
+    marginRight: 12,
+    backgroundColor: '#eef1ff',
+  },
+  thumbnailPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  thumbnailPlaceholderText: {
+    fontSize: 20,
+  },
   info: {
     flex: 1,
   },
@@ -51,6 +107,30 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
     marginLeft: 18,
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 6,
+    marginLeft: 18,
+    gap: 6,
+  },
+  badge: {
+    fontSize: 11,
+    color: '#3a5bd9',
+    backgroundColor: '#eef1ff',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginRight: 6,
+    marginBottom: 4,
+  },
+  detailBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  detailText: {
+    fontSize: 16,
   },
   deleteBtn: {
     paddingHorizontal: 10,

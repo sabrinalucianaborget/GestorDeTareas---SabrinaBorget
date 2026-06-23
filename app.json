@@ -8,13 +8,57 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gestordetareas.app"
+      "bundleIdentifier": "com.gestordetareas.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Gestor de Tareas necesita acceder a la cámara para tomar una foto y asociarla a una tarea.",
+        "NSPhotoLibraryUsageDescription": "Gestor de Tareas necesita acceder a tu galería para elegir una imagen y asociarla a una tarea.",
+        "NSLocationWhenInUseUsageDescription": "Gestor de Tareas necesita tu ubicación para asociar el lugar donde se debe realizar la tarea.",
+        "NSContactsUsageDescription": "Gestor de Tareas necesita acceder a tus contactos para asociar un responsable a la tarea.",
+        "NSCalendarsUsageDescription": "Gestor de Tareas necesita acceder a tu calendario para crear un recordatorio de la tarea.",
+        "NSCalendarsFullAccessUsageDescription": "Gestor de Tareas necesita acceder a tu calendario para crear un recordatorio de la tarea."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#f0f4ff"
       },
-      "package": "com.gestordetareas.app"
-    }
+      "package": "com.gestordetareas.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_CONTACTS",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Gestor de Tareas necesita acceder a tu galería para elegir una imagen y asociarla a una tarea.",
+          "cameraPermission": "Gestor de Tareas necesita acceder a la cámara para tomar una foto y asociarla a una tarea."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Gestor de Tareas necesita tu ubicación para asociar el lugar donde se debe realizar la tarea."
+        }
+      ],
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Gestor de Tareas necesita acceder a tus contactos para asociar un responsable a la tarea."
+        }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Gestor de Tareas necesita acceder a tu calendario para crear un recordatorio de la tarea."
+        }
+      ]
+    ]
   }
 }
